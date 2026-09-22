@@ -8,6 +8,10 @@ import {
   SAMPLE,
   YAML_SAMPLE,
 } from '../../../shared/samples/json-samples';
+import { Topbar } from '../../../shared/components/topbar/topbar';
+import { Tab, Tabs } from '../../../shared/components/tabs/tabs';
+import { Button } from '../../../shared/components/button/button';
+import { AdSection } from '../../../shared/components/ad-section/ad-section';
 import { JSON_TOOLS } from '../application/tools';
 import { JSON_PROCESSOR, type Operation } from '../ports/json-processor';
 import { CommandRegistry, type ToolContext } from '../../commands/application/command-registry';
@@ -18,7 +22,18 @@ import { JsonTree } from './json-tree';
 import { JsonDiff } from './json-diff';
 @Component({
   selector: 'app-json-workspace',
-  imports: [FormsModule, CommandPalette, CodeOutput, JsonTree, JsonDiff],
+  imports: [
+    FormsModule,
+    CommandPalette,
+    CodeOutput,
+    JsonTree,
+    JsonDiff,
+    Topbar,
+    Tabs,
+    Tab,
+    Button,
+    AdSection,
+  ],
   templateUrl: './json-workspace.html',
 })
 export class JsonWorkspace {
