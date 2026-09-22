@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build && node scripts/sitemap.mts",
+    "build": "ng build && node scripts/sitemap.mts && node scripts/ads-txt.mts",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },

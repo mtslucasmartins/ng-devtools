@@ -6,7 +6,10 @@ import { JSON_BASE_PATH, JSON_TOOLS } from '../src/features/json/application/too
 const SITE_URL = 'https://lurtins.com';
 const OUTPUT = 'dist/ng-devtools/browser/sitemap.xml';
 
-const urls = JSON_TOOLS.map((tool) => `${SITE_URL}${JSON_BASE_PATH}/${tool.path}`);
+const urls = [
+  ...JSON_TOOLS.map((tool) => `${SITE_URL}${JSON_BASE_PATH}/${tool.path}`),
+  `${SITE_URL}/privacy`,
+];
 const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map((url) => `  <url><loc>${url}</loc></url>`).join('\n')}

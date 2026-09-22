@@ -39,7 +39,7 @@ export const JSON_TOOLS: Tool[] = [
     seo: {
       title: 'JSON Minifier: Compress JSON Online',
       description:
-        'Strip whitespace and shrink JSON to a single line, instantly and locally in your browser. No uploads, no tracking.',
+        'Strip whitespace and shrink JSON to a single line, instantly and locally in your browser. Nothing is uploaded.',
     },
   },
   {

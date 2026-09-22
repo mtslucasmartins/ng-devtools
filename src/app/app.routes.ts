@@ -17,5 +17,10 @@ export const routes: Routes = [
       },
     ],
   },
+  {
+    path: 'privacy',
+    loadComponent: () =>
+      import('../features/legal/privacy-page').then((module) => module.PrivacyPage),
+  },
   { path: '**', redirectTo: 'tools' },
 ];
