@@ -84,39 +84,13 @@ kbd {
   height: 40px;
   margin: 0 8px 29px;
 }
-.brand-mark {
-  position: relative;
-  width: 33px;
-  height: 34px;
-  line-height: 30px;
-  border-radius: 9px;
-  background: var(--moss-dark);
-  color: #bdd3ad;
-  text-align: center;
-  font-family: Georgia, serif;
-  font-size: 29px;
-  font-weight: 600;
-  letter-spacing: -3px;
-  padding-right: 3px;
-}
-.brand-mark > span {
-  position: absolute;
-  right: -3px;
-  top: -9px;
-  color: #7aa369;
-  font-size: 18px;
-}
-.brand-period {
-  color: var(--moss);
-}
 .brand-tag {
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 650;
-  letter-spacing: 1.1px;
+  letter-spacing: 1.6px;
   border: 1px solid #d9dfd4;
-  border-radius: 4px;
-  padding: 4px 5px;
-  margin: 7px 0 0 3px;
+  border-radius: 5px;
+  padding: 6px 9px;
   color: #7b8474;
 }
 .sidebar-search {
