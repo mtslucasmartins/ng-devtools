@@ -15,7 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      deployments: write
     steps:
       - uses: actions/checkout@v4
 
@@ -28,15 +27,11 @@ jobs:
       - run: npx ng test --watch=false
       - run: npm run build
 
-      # main → production (lurtins.com); other branches → preview URL on *.pages.dev
-      - name: Publish to Cloudflare Pages
-        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+      # Only main deploys; pull requests just run the tests and build.
+      - name: Deploy to Cloudflare
+        if: github.ref == 'refs/heads/main'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          command: >-
-            pages deploy dist/ng-devtools/browser
-            --project-name=ng-devtools
-            --branch=${{ github.head_ref || github.ref_name }}
+          command: deploy

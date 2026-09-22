@@ -1,0 +1,14 @@
+{
+  "name": "lurtins",
+  "compatibility_date": "2026-09-21",
+  // Static site only: no Worker script, just the Angular build output.
+  "assets": {
+    "directory": "dist/ng-devtools/browser",
+    // Unknown paths get index.html so the Angular router can handle them.
+    "not_found_handling": "single-page-application",
+  },
+  "routes": [
+    { "pattern": "lurtins.com", "custom_domain": true },
+    { "pattern": "www.lurtins.com", "custom_domain": true },
+  ],
+}

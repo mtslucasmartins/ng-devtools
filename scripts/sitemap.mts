@@ -1,5 +1,5 @@
 // Writes sitemap.xml into the build output from the tool list, so new tools are indexed automatically.
-// Runs on Node's built-in TypeScript support: `node scripts/sitemap.ts`.
+// Runs on Node's built-in TypeScript support: `node scripts/sitemap.mts`.
 import { writeFileSync } from 'node:fs';
 import { JSON_BASE_PATH, JSON_TOOLS } from '../src/features/json/application/tools.ts';
 
