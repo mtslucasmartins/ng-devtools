@@ -1,6 +1,13 @@
 import { Component, computed, HostListener, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Workspace, SAMPLE } from '../../../shared/workspace/workspace';
+import { Workspace } from '../../../shared/workspace/workspace';
+import {
+  CSV_SAMPLE,
+  DIFF_SAMPLE,
+  JSON_ROWS_SAMPLE,
+  SAMPLE,
+  YAML_SAMPLE,
+} from '../../../shared/samples/json-samples';
 import { JSON_TOOLS } from '../application/tools';
 import { JSON_PROCESSOR, type Operation } from '../ports/json-processor';
 import { CommandRegistry, type ToolContext } from '../../commands/application/command-registry';
@@ -203,41 +210,17 @@ export class JsonWorkspace {
   }
   loadSample() {
     if (this.active() === 'diff') {
-      this.editInput(
-        JSON.stringify(
-          {
-            name: 'Moss',
-            version: '1.0',
-            private: true,
-            tools: ['Viewer', 'JSONPath'],
-            legacy: true,
-          },
-          null,
-          2,
-        ),
-      );
-      this.diffRight.set(
-        JSON.stringify(
-          {
-            name: 'Moss',
-            version: '1.1',
-            private: true,
-            tools: ['Viewer', 'Diff'],
-            theme: 'green',
-          },
-          null,
-          2,
-        ),
-      );
+      this.editInput(DIFF_SAMPLE.left);
+      this.diffRight.set(DIFF_SAMPLE.right);
       return;
     }
     const sample =
       this.active() === 'fromYaml'
-        ? 'name: Moss\nprivate: true\ntools:\n  - JSON\n  - YAML\n'
+        ? YAML_SAMPLE
         : this.active() === 'fromCsv'
-          ? 'name,language\nMoss,JSON\nFern,YAML'
+          ? CSV_SAMPLE
           : this.active() === 'toCsv'
-            ? '[{"name":"Moss","language":"JSON"},{"name":"Fern","language":"YAML"}]'
+            ? JSON_ROWS_SAMPLE
             : SAMPLE;
     this.editInput(sample);
   }

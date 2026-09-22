@@ -1,11 +1,6 @@
+@use 'shared/colors/palette';
+
 :root {
-  --moss: #45764f;
-  --moss-dark: #29413e;
-  --sage: #8abd7e;
-  --paper: #f8f9f6;
-  --line: #e2e7df;
-  --muted: #7b847b;
-  --ink: #303f36;
   --bs-border-radius: 8px;
   --bs-body-font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --bs-body-color: var(--ink);
