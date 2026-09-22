@@ -66,8 +66,6 @@ export class JsonWorkspace {
   readonly diffRight = signal('');
   readonly tools = JSON_TOOLS;
   readonly conversionTools = JSON_TOOLS.filter((tool) => tool.group === 'CONVERT');
-  readonly sidebarTools = JSON_TOOLS.filter((tool) => tool.group === 'TRANSFORM');
-  readonly groups = [...new Set(this.sidebarTools.map((tool) => tool.group))];
   readonly active = signal<Operation>('format');
   readonly tool = computed(() => this.tools.find((tool) => tool.id === this.active())!);
   /** The tool the URL points at; differs from `active` for pages like /tools/json/minify. */

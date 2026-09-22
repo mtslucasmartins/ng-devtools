@@ -113,7 +113,12 @@ describe('local JSON workspace', () => {
     const fixture = TestBed.createComponent(JsonWorkspace);
     fixture.detectChanges();
     const app = fixture.componentInstance;
-    expect(fixture.nativeElement.querySelectorAll('.nav-item')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('.sidebar .nav-item')).toHaveLength(0);
+    expect(
+      Array.from(
+        fixture.nativeElement.querySelectorAll('.sidebar-category') as NodeListOf<HTMLElement>,
+      ).map((link) => link.textContent?.replace(/\d+/, '').trim()),
+    ).toEqual(['JSON Tools', 'YAML Tools']);
     const convertTab = Array.from(
       fixture.nativeElement.querySelectorAll('.tool-tabs button') as NodeListOf<HTMLButtonElement>,
     ).find((button) => button.textContent?.trim() === 'Convert')!;
