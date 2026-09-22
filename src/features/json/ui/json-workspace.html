@@ -18,11 +18,14 @@
       <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span>Find a tool...</span
       ><kbd>⌘ K</kbd>
     </button>
-    <div class="sidebar-category">
-      <span><i class="fa-solid fa-code" aria-hidden="true"></i> JSON tools</span
-      ><span class="count">{{ sidebarTools.length }}</span>
-    </div>
-    <nav aria-label="JSON tools">
+    <a
+      class="sidebar-category"
+      href="/tools/json/viewer"
+      (click)="$event.preventDefault(); navigate('format')"
+      ><span><i class="fa-solid fa-code" aria-hidden="true"></i> JSON Tools</span
+      ><span class="count">{{ sidebarTools.length }}</span></a
+    >
+    <nav aria-label="JSON Tools">
       @for (group of groups; track group) {
         <div class="nav-group-label">{{ group }}</div>
         @for (item of sidebarTools; track item.id) {
@@ -43,6 +46,9 @@
         }
       }
     </nav>
+    <a class="sidebar-category" routerLink="/tools/yaml"
+      ><span><i class="fa-solid fa-file-lines" aria-hidden="true"></i> YAML Tools</span></a
+    >
     <div class="sidebar-bottom">
       <div class="local-note">
         <span class="local-icon"><i class="fa-solid fa-leaf" aria-hidden="true"></i></span>
@@ -65,7 +71,7 @@
     <div class="content-layout">
       <main class="workspace-main">
         <div appTabs aria-label="Quick tool navigation">
-          @for (id of ['format', 'diff', 'jsonpath', 'schemaValidate']; track id) {
+          @for (id of ['format', 'diff', 'jsonpath', 'schemaValidate', 'escape']; track id) {
             @for (item of tools; track item.id) {
               @if (item.id === id) {
                 <button
@@ -532,6 +538,9 @@
           <button class="btn btn-outline-secondary mb-3" (click)="run('unescape')">
             Unescape string
           </button>
+        }
+        @if (guide(); as guide) {
+          <section appToolGuide [guide]="guide"></section>
         }
         <footer class="workspace-footer">
           <span>Built for the little things you do every day.</span

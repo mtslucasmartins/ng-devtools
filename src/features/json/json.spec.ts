@@ -8,6 +8,7 @@ import { JsonWorkspace } from './ui/json-workspace';
 import { BrowserJsonProcessor } from './infrastructure/browser-json-processor';
 import { JSON_PROCESSOR, type Operation } from './ports/json-processor';
 import { JSON_TOOLS } from './application/tools';
+import { TOOL_GUIDES } from './application/tool-guides';
 import { CommandRegistry } from '../commands/application/command-registry';
 import { registerJsonCommands } from './application/register-commands';
 import { diffLines } from './domain/diff-lines';
@@ -326,6 +327,7 @@ describe('local JSON workspace', () => {
       ],
     });
     expect(new Set(JSON_TOOLS.map((tool) => tool.path)).size).toBe(JSON_TOOLS.length);
+    for (const tool of JSON_TOOLS) expect(TOOL_GUIDES[tool.id]?.faqs.length).toBeGreaterThan(0);
     const harness = await RouterTestingHarness.create();
     const app = await harness.navigateByUrl('/tools/json/to-csv', JsonWorkspace);
     expect(app.active()).toBe('toCsv');
@@ -338,6 +340,8 @@ describe('local JSON workspace', () => {
     expect(document.querySelector('link[rel="canonical"]')?.getAttribute('href')).toMatch(
       /^https:\/\/lurtins\.com\/tools\/json\/minify$/,
     );
+    await harness.navigateByUrl('/tools/yaml');
+    expect(TestBed.inject(Router).url).toBe('/tools/json/viewer');
     await harness.navigateByUrl('/tools/json/unknown');
     expect(TestBed.inject(Router).url).toBe('/tools/json/viewer');
   });

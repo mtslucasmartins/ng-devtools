@@ -9,7 +9,7 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Workspace } from '../../../shared/workspace/workspace';
 import {
@@ -23,8 +23,10 @@ import { Topbar } from '../../../shared/components/topbar/topbar';
 import { Tab, Tabs } from '../../../shared/components/tabs/tabs';
 import { Button } from '../../../shared/components/button/button';
 import { AdSection } from '../../../shared/components/ad-section/ad-section';
+import { ToolGuide } from '../../../shared/components/tool-guide/tool-guide';
 import { Seo } from '../../../shared/seo/seo';
 import { JSON_BASE_PATH, JSON_TOOLS } from '../application/tools';
+import { TOOL_GUIDES } from '../application/tool-guides';
 import { JSON_PROCESSOR, type Operation } from '../ports/json-processor';
 import { CommandRegistry, type ToolContext } from '../../commands/application/command-registry';
 import { registerJsonCommands } from '../application/register-commands';
@@ -36,6 +38,7 @@ import { JsonDiff } from './json-diff';
   selector: 'app-json-workspace',
   imports: [
     FormsModule,
+    RouterLink,
     CommandPalette,
     CodeOutput,
     JsonTree,
@@ -45,6 +48,7 @@ import { JsonDiff } from './json-diff';
     Tab,
     Button,
     AdSection,
+    ToolGuide,
   ],
   templateUrl: './json-workspace.html',
 })
@@ -69,6 +73,7 @@ export class JsonWorkspace {
   /** The tool the URL points at; differs from `active` for pages like /tools/json/minify. */
   readonly page = signal<Operation>('format');
   readonly pageTool = computed(() => this.tools.find((tool) => tool.id === this.page())!);
+  readonly guide = computed(() => TOOL_GUIDES[this.page()]);
   readonly schemaWorkspace = computed(() => this.active() === 'schemaValidate');
   readonly schemaView = signal<'schema' | 'result'>('schema');
   readonly schemaResult = signal<string | null>(null);

@@ -1,5 +1,6 @@
-# Cloudflare Pages redirects. Real HTTP redirects so search engines index one URL per page.
+# Cloudflare static-asset redirects. Real HTTP redirects so search engines index one URL per page.
 /                     /tools               302
 /tools                /tools/json/viewer   301
 /tools/json           /tools/json/viewer   301
 /tools/json/convert   /tools/json/to-yaml  301
+/tools/yaml           /tools/json/viewer   302

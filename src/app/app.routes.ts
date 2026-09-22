@@ -8,6 +8,8 @@ export const routes: Routes = [
     path: 'tools',
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'json/viewer' },
+      // No YAML-specific tools yet; the JSON workspace converts to and from YAML.
+      { path: 'yaml', pathMatch: 'full', redirectTo: 'json/viewer' },
       {
         path: '',
         loadChildren: () =>

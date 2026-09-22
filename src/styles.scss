@@ -123,6 +123,12 @@ kbd {
 .sidebar-category i {
   margin-right: 8px;
 }
+a.sidebar-category {
+  text-decoration: none;
+}
+a.sidebar-category:hover {
+  color: var(--moss);
+}
 .count {
   background: #e1e8dc;
   font-size: 9px;
@@ -817,6 +823,83 @@ h1 {
   font-size: 7px;
   letter-spacing: 1px;
   color: #8ea37d;
+}
+.tool-guide {
+  border: 1px solid #dce3d6;
+  border-radius: 8px;
+  background: #fff;
+  padding: 20px 22px 18px;
+  margin-bottom: 8px;
+  color: #56634f;
+}
+.tool-guide h2 {
+  font-size: 14px;
+  font-weight: 650;
+  letter-spacing: -0.3px;
+  color: var(--ink);
+  margin: 0 0 6px;
+}
+.tool-guide h3 {
+  font-size: 9px;
+  font-weight: 650;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #8b9484;
+  margin: 0 0 10px;
+}
+.tool-guide-intro p {
+  font-size: 11px;
+  line-height: 1.7;
+  margin: 0;
+  max-width: 720px;
+}
+.tool-guide-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: 28px;
+  border-top: 1px solid #edf0e9;
+  margin-top: 16px;
+  padding-top: 16px;
+}
+.tool-guide-steps {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 11px;
+  line-height: 1.7;
+}
+.tool-guide-steps li + li {
+  margin-top: 6px;
+}
+.tool-guide-steps li::marker {
+  color: var(--moss);
+  font-weight: 650;
+}
+.tool-guide-faq {
+  border-bottom: 1px solid #edf0e9;
+}
+.tool-guide-faq:last-child {
+  border-bottom: 0;
+}
+.tool-guide-faq summary {
+  cursor: pointer;
+  padding: 8px 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: #3f5944;
+}
+.tool-guide-faq summary:hover {
+  color: var(--moss);
+}
+.tool-guide-faq p {
+  margin: 0 0 10px;
+  font-size: 11px;
+  line-height: 1.7;
+}
+@media (max-width: 800px) {
+  .tool-guide-columns {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
 }
 .workspace-footer {
   display: flex;
