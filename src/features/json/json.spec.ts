@@ -1,8 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter, Router, withComponentInputBinding } from '@angular/router';
+import { RouterTestingHarness } from '@angular/router/testing';
+import { routes } from '../../app/app.routes';
 import { JsonWorkspace } from './ui/json-workspace';
 import { BrowserJsonProcessor } from './infrastructure/browser-json-processor';
 import { JSON_PROCESSOR, type Operation } from './ports/json-processor';
+import { JSON_TOOLS } from './application/tools';
 import { CommandRegistry } from '../commands/application/command-registry';
 import { registerJsonCommands } from './application/register-commands';
 import { diffLines } from './domain/diff-lines';
@@ -99,7 +103,10 @@ describe('local JSON workspace', () => {
   it('renders all navigation and preserves workspace data and output on invalid input', async () => {
     TestBed.configureTestingModule({
       imports: [JsonWorkspace],
-      providers: [{ provide: JSON_PROCESSOR, useClass: BrowserJsonProcessor }],
+      providers: [
+        provideRouter(routes),
+        { provide: JSON_PROCESSOR, useClass: BrowserJsonProcessor },
+      ],
     });
     const fixture = TestBed.createComponent(JsonWorkspace);
     fixture.detectChanges();
@@ -185,7 +192,10 @@ describe('local JSON workspace', () => {
   it('generates and validates in one Schema workspace without replacing the document or schema with results', async () => {
     TestBed.configureTestingModule({
       imports: [JsonWorkspace],
-      providers: [{ provide: JSON_PROCESSOR, useClass: BrowserJsonProcessor }],
+      providers: [
+        provideRouter(routes),
+        { provide: JSON_PROCESSOR, useClass: BrowserJsonProcessor },
+      ],
     });
     const fixture = TestBed.createComponent(JsonWorkspace);
     const app = fixture.componentInstance;
@@ -258,7 +268,10 @@ describe('local JSON workspace', () => {
   it('keeps both diff documents editable, refreshes highlights, and preserves input across navigation', async () => {
     TestBed.configureTestingModule({
       imports: [JsonWorkspace],
-      providers: [{ provide: JSON_PROCESSOR, useClass: BrowserJsonProcessor }],
+      providers: [
+        provideRouter(routes),
+        { provide: JSON_PROCESSOR, useClass: BrowserJsonProcessor },
+      ],
     });
     const fixture = TestBed.createComponent(JsonWorkspace);
     const app = fixture.componentInstance;
@@ -303,5 +316,24 @@ describe('local JSON workspace', () => {
         .map((token) => token.value)
         .join(''),
     ).toBe(input);
+  });
+  it('gives every tool its own URL and page metadata, and keeps tabs in sync with the URL', async () => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter(routes, withComponentInputBinding()),
+        { provide: JSON_PROCESSOR, useClass: BrowserJsonProcessor },
+      ],
+    });
+    expect(new Set(JSON_TOOLS.map((tool) => tool.path)).size).toBe(JSON_TOOLS.length);
+    const harness = await RouterTestingHarness.create();
+    const app = await harness.navigateByUrl('/tools/json/to-csv', JsonWorkspace);
+    expect(app.active()).toBe('toCsv');
+    app.navigate('diff');
+    await harness.fixture.whenStable();
+    expect(TestBed.inject(Router).url).toBe('/tools/json/diff');
+    await harness.navigateByUrl('/tools/json/minify');
+    expect(app.active()).toBe('format');
+    await harness.navigateByUrl('/tools/json/unknown');
+    expect(TestBed.inject(Router).url).toBe('/tools/json/viewer');
   });
 });

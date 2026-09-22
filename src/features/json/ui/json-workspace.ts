@@ -1,4 +1,15 @@
-import { Component, computed, HostListener, inject, signal, viewChild } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  HostListener,
+  inject,
+  input,
+  signal,
+  untracked,
+  viewChild,
+} from '@angular/core';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Workspace } from '../../../shared/workspace/workspace';
 import {
@@ -12,7 +23,7 @@ import { Topbar } from '../../../shared/components/topbar/topbar';
 import { Tab, Tabs } from '../../../shared/components/tabs/tabs';
 import { Button } from '../../../shared/components/button/button';
 import { AdSection } from '../../../shared/components/ad-section/ad-section';
-import { JSON_TOOLS } from '../application/tools';
+import { JSON_BASE_PATH, JSON_TOOLS } from '../application/tools';
 import { JSON_PROCESSOR, type Operation } from '../ports/json-processor';
 import { CommandRegistry, type ToolContext } from '../../commands/application/command-registry';
 import { registerJsonCommands } from '../application/register-commands';
@@ -41,6 +52,9 @@ export class JsonWorkspace {
   readonly workspace = inject(Workspace);
   readonly processor = inject(JSON_PROCESSOR);
   readonly registry = inject(CommandRegistry);
+  private readonly router = inject(Router);
+  /** Tool path from the URL (/tools/json/:slug), bound by the router. */
+  readonly slug = input<string>();
   readonly palette = viewChild.required(CommandPalette);
   readonly diffEditor = viewChild(JsonDiff);
   readonly diffRight = signal('');
@@ -50,6 +64,8 @@ export class JsonWorkspace {
   readonly groups = [...new Set(this.sidebarTools.map((tool) => tool.group))];
   readonly active = signal<Operation>('format');
   readonly tool = computed(() => this.tools.find((tool) => tool.id === this.active())!);
+  /** The tool the URL points at; differs from `active` for pages like /tools/json/minify. */
+  readonly page = signal<Operation>('format');
   readonly schemaWorkspace = computed(() => this.active() === 'schemaValidate');
   readonly schemaView = signal<'schema' | 'result'>('schema');
   readonly schemaResult = signal<string | null>(null);
@@ -106,11 +122,22 @@ export class JsonWorkspace {
   private lastShift = 0;
   constructor() {
     registerJsonCommands(this.registry);
+    effect(() => {
+      const tool = this.tools.find((item) => item.path === this.slug());
+      if (tool) untracked(() => tool.id !== this.page() && this.select(tool.id));
+    });
   }
   private isOperation(value: string): value is Operation {
     return this.tools.some((tool) => tool.id === value) || value === 'sort' || value === 'unescape';
   }
   navigate(operation: Operation) {
+    this.select(operation);
+    this.message.set('Input carried over. Ready when you are.');
+    const path = this.tools.find((tool) => tool.id === operation)?.path;
+    if (path) void this.router.navigate([JSON_BASE_PATH, path]);
+  }
+  private select(operation: Operation) {
+    this.page.set(operation);
     this.active.set(
       operation === 'validate' || operation === 'minify'
         ? 'format'
@@ -121,7 +148,6 @@ export class JsonWorkspace {
     this.view.set('code');
     this.mobileNav.set(false);
     this.error.set('');
-    this.message.set('Input carried over. Ready when you are.');
     this.revision++;
     this.busy.set(false);
   }

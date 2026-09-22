@@ -6,7 +6,11 @@ export interface Tool {
   group: string;
   description: string;
   action: string;
+  /** URL segment under JSON_BASE_PATH, e.g. 'diff' for /tools/json/diff. */
+  path: string;
 }
+/** Where the JSON tools live on the site; each tool is served at `${JSON_BASE_PATH}/${tool.path}`. */
+export const JSON_BASE_PATH = '/tools/json';
 export const JSON_TOOLS: Tool[] = [
   {
     id: 'format',
@@ -15,6 +19,7 @@ export const JSON_TOOLS: Tool[] = [
     group: 'ESSENTIALS',
     description: 'A little clarity for your curly brackets.',
     action: 'Format JSON',
+    path: 'viewer',
   },
   {
     id: 'minify',
@@ -23,6 +28,7 @@ export const JSON_TOOLS: Tool[] = [
     group: 'ESSENTIALS',
     description: 'Less whitespace. Same JSON.',
     action: 'Minify JSON',
+    path: 'minify',
   },
   {
     id: 'validate',
@@ -31,6 +37,7 @@ export const JSON_TOOLS: Tool[] = [
     group: 'ESSENTIALS',
     description: 'Make sure every bracket is in the right place.',
     action: 'Validate JSON',
+    path: 'validate',
   },
   {
     id: 'diff',
@@ -39,6 +46,7 @@ export const JSON_TOOLS: Tool[] = [
     group: 'ESSENTIALS',
     description: 'Find exactly what changed between two documents.',
     action: 'Compare',
+    path: 'diff',
   },
   {
     id: 'jsonpath',
@@ -47,6 +55,7 @@ export const JSON_TOOLS: Tool[] = [
     group: 'ESSENTIALS',
     description: 'Find the data you need, one path at a time.',
     action: 'Run query',
+    path: 'jsonpath',
   },
   {
     id: 'toYaml',
@@ -55,6 +64,7 @@ export const JSON_TOOLS: Tool[] = [
     group: 'CONVERT',
     description: 'Give your JSON a little breathing room.',
     action: 'Convert to YAML',
+    path: 'to-yaml',
   },
   {
     id: 'fromYaml',
@@ -63,6 +73,7 @@ export const JSON_TOOLS: Tool[] = [
     group: 'CONVERT',
     description: 'Bring your YAML into the JSON workspace.',
     action: 'Convert to JSON',
+    path: 'from-yaml',
   },
   {
     id: 'toCsv',
@@ -71,6 +82,7 @@ export const JSON_TOOLS: Tool[] = [
     group: 'CONVERT',
     description: 'Turn an array of records into a table.',
     action: 'Convert to CSV',
+    path: 'to-csv',
   },
   {
     id: 'fromCsv',
@@ -79,6 +91,7 @@ export const JSON_TOOLS: Tool[] = [
     group: 'CONVERT',
     description: 'Turn rows and columns into structured data.',
     action: 'Convert to JSON',
+    path: 'from-csv',
   },
   {
     id: 'toXml',
@@ -87,6 +100,7 @@ export const JSON_TOOLS: Tool[] = [
     group: 'CONVERT',
     description: 'An XML representation of your JSON data.',
     action: 'Convert to XML',
+    path: 'to-xml',
   },
   {
     id: 'escape',
@@ -95,6 +109,7 @@ export const JSON_TOOLS: Tool[] = [
     group: 'TRANSFORM',
     description: 'Safely wrap text in a JSON string, or unwrap it.',
     action: 'Escape string',
+    path: 'escape',
   },
   {
     id: 'schemaValidate',
@@ -103,6 +118,7 @@ export const JSON_TOOLS: Tool[] = [
     group: 'SCHEMA',
     description: 'Generate a schema from your document, or validate it against one.',
     action: 'Validate schema',
+    path: 'schema',
   },
   {
     id: 'schemaGenerate',
@@ -111,5 +127,6 @@ export const JSON_TOOLS: Tool[] = [
     group: 'SCHEMA',
     description: 'Start a JSON Schema from a sample document.',
     action: 'Generate schema',
+    path: 'schema-generator',
   },
 ];

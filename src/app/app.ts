@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { JsonWorkspace } from '../features/json/ui/json-workspace';
+import { RouterOutlet } from '@angular/router';
 
-@Component({ selector: 'app-root', imports: [JsonWorkspace], template: '<app-json-workspace />' })
+@Component({ selector: 'app-root', imports: [RouterOutlet], template: '<router-outlet />' })
 export class App {}
