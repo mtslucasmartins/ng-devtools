@@ -23,6 +23,7 @@ import { Topbar } from '../../../shared/components/topbar/topbar';
 import { Tab, Tabs } from '../../../shared/components/tabs/tabs';
 import { Button } from '../../../shared/components/button/button';
 import { AdSection } from '../../../shared/components/ad-section/ad-section';
+import { Seo } from '../../../shared/seo/seo';
 import { JSON_BASE_PATH, JSON_TOOLS } from '../application/tools';
 import { JSON_PROCESSOR, type Operation } from '../ports/json-processor';
 import { CommandRegistry, type ToolContext } from '../../commands/application/command-registry';
@@ -53,6 +54,7 @@ export class JsonWorkspace {
   readonly processor = inject(JSON_PROCESSOR);
   readonly registry = inject(CommandRegistry);
   private readonly router = inject(Router);
+  private readonly seo = inject(Seo);
   /** Tool path from the URL (/tools/json/:slug), bound by the router. */
   readonly slug = input<string>();
   readonly palette = viewChild.required(CommandPalette);
@@ -66,6 +68,7 @@ export class JsonWorkspace {
   readonly tool = computed(() => this.tools.find((tool) => tool.id === this.active())!);
   /** The tool the URL points at; differs from `active` for pages like /tools/json/minify. */
   readonly page = signal<Operation>('format');
+  readonly pageTool = computed(() => this.tools.find((tool) => tool.id === this.page())!);
   readonly schemaWorkspace = computed(() => this.active() === 'schemaValidate');
   readonly schemaView = signal<'schema' | 'result'>('schema');
   readonly schemaResult = signal<string | null>(null);
@@ -125,6 +128,19 @@ export class JsonWorkspace {
     effect(() => {
       const tool = this.tools.find((item) => item.path === this.slug());
       if (tool) untracked(() => tool.id !== this.page() && this.select(tool.id));
+    });
+    effect(() => {
+      const tool = this.pageTool();
+      this.seo.set({
+        title: tool.seo.title,
+        description: tool.seo.description,
+        path: `${JSON_BASE_PATH}/${tool.path}`,
+        breadcrumbs: [
+          { name: 'Tools', path: '/tools' },
+          { name: 'JSON', path: JSON_BASE_PATH },
+          { name: tool.title, path: `${JSON_BASE_PATH}/${tool.path}` },
+        ],
+      });
     });
   }
   private isOperation(value: string): value is Operation {

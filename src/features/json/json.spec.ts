@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router, withComponentInputBinding } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
+import { Title } from '@angular/platform-browser';
 import { routes } from '../../app/app.routes';
 import { JsonWorkspace } from './ui/json-workspace';
 import { BrowserJsonProcessor } from './infrastructure/browser-json-processor';
@@ -328,11 +329,15 @@ describe('local JSON workspace', () => {
     const harness = await RouterTestingHarness.create();
     const app = await harness.navigateByUrl('/tools/json/to-csv', JsonWorkspace);
     expect(app.active()).toBe('toCsv');
+    expect(TestBed.inject(Title).getTitle()).toBe('JSON to CSV Converter | Moss');
     app.navigate('diff');
     await harness.fixture.whenStable();
     expect(TestBed.inject(Router).url).toBe('/tools/json/diff');
     await harness.navigateByUrl('/tools/json/minify');
     expect(app.active()).toBe('format');
+    expect(document.querySelector('link[rel="canonical"]')?.getAttribute('href')).toMatch(
+      /^https:\/\/lurtins\.com\/tools\/json\/minify$/,
+    );
     await harness.navigateByUrl('/tools/json/unknown');
     expect(TestBed.inject(Router).url).toBe('/tools/json/viewer');
   });
