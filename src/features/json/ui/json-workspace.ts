@@ -24,6 +24,7 @@ import { Tab, Tabs } from '../../../shared/components/tabs/tabs';
 import { Button } from '../../../shared/components/button/button';
 import { AdSection } from '../../../shared/components/ad-section/ad-section';
 import { ToolGuide } from '../../../shared/components/tool-guide/tool-guide';
+import { ToolSidebar } from '../../../shared/components/tool-sidebar/tool-sidebar';
 import { Seo } from '../../../shared/seo/seo';
 import { JSON_BASE_PATH, JSON_TOOLS } from '../application/tools';
 import { TOOL_GUIDES } from '../application/tool-guides';
@@ -49,6 +50,7 @@ import { JsonDiff } from './json-diff';
     Button,
     AdSection,
     ToolGuide,
+    ToolSidebar,
   ],
   templateUrl: './json-workspace.html',
 })
@@ -68,6 +70,29 @@ export class JsonWorkspace {
   readonly conversionTools = JSON_TOOLS.filter((tool) => tool.group === 'CONVERT');
   readonly active = signal<Operation>('format');
   readonly tool = computed(() => this.tools.find((tool) => tool.id === this.active())!);
+  /** Top-level JSON pages, shown both as tabs and as sidebar items. Convert covers every conversion. */
+  readonly sections = computed(() => {
+    const byId = (id: Operation) => this.tools.find((tool) => tool.id === id)!;
+    const converting = this.tool().group === 'CONVERT';
+    return [
+      ...(['format', 'diff', 'jsonpath', 'schemaValidate', 'escape'] as const).map((id) => ({
+        ...byId(id),
+        selected: this.active() === id,
+      })),
+      {
+        ...byId(converting ? this.active() : 'toYaml'),
+        title: 'Convert',
+        icon: 'arrow-right-arrow-left',
+        selected: converting,
+      },
+    ];
+  });
+  readonly currentSectionPath = computed(
+    () =>
+      (this.tool().group === 'CONVERT'
+        ? 'to-yaml'
+        : this.sections().find((section) => section.selected)?.path) ?? 'viewer',
+  );
   /** The tool the URL points at; differs from `active` for pages like /tools/json/minify. */
   readonly page = signal<Operation>('format');
   readonly pageTool = computed(() => this.tools.find((tool) => tool.id === this.page())!);

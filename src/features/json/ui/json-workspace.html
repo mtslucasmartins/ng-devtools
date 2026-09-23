@@ -6,39 +6,14 @@
       (click)="mobileNav.set(false)"
     ></button>
   }
-  <aside class="sidebar" [class.mobile-open]="mobileNav()">
-    <a
-      class="brand"
-      href="/tools/json/viewer"
-      (click)="$event.preventDefault(); navigate('format')"
-      aria-label="DevTools home"
-      ><span class="brand-tag">DEVTOOLS</span></a
-    >
-    <button class="sidebar-search" (click)="palette.open()">
-      <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span>Find a tool...</span
-      ><kbd>⌘ K</kbd>
-    </button>
-    <a
-      class="sidebar-category"
-      href="/tools/json/viewer"
-      (click)="$event.preventDefault(); navigate('format')"
-      ><span><i class="fa-solid fa-code" aria-hidden="true"></i> JSON Tools</span
-      ><span class="count">{{ tools.length }}</span></a
-    >
-    <a class="sidebar-category" routerLink="/tools/yaml"
-      ><span><i class="fa-solid fa-file-lines" aria-hidden="true"></i> YAML Tools</span></a
-    >
-    <div class="sidebar-bottom">
-      <div class="local-note">
-        <span class="local-icon"><i class="fa-solid fa-leaf" aria-hidden="true"></i></span>
-        <div>
-          <strong>Local by nature.</strong>
-          <p>Your data stays with you.</p>
-        </div>
-      </div>
-      <div class="sidebar-version"><span>Small tools. Less friction.</span><span>v0.1</span></div>
-    </div>
-  </aside>
+  <app-tool-sidebar
+    class="sidebar"
+    active="json"
+    [current]="currentSectionPath()"
+    [mobileOpen]="mobileNav()"
+    (search)="palette.open()"
+    (close)="mobileNav.set(false)"
+  />
 
   <div class="main-shell">
     <header
@@ -50,28 +25,16 @@
     <div class="content-layout">
       <main class="workspace-main">
         <div appTabs aria-label="Quick tool navigation">
-          @for (id of ['format', 'diff', 'jsonpath', 'schemaValidate', 'escape']; track id) {
-            @for (item of tools; track item.id) {
-              @if (item.id === id) {
-                <button
-                  appTab
-                  [icon]="item.icon"
-                  [selected]="active() === item.id"
-                  (click)="navigate(item.id)"
-                >
-                  {{ item.title }}
-                </button>
-              }
-            }
+          @for (section of sections(); track section.title) {
+            <button
+              appTab
+              [icon]="section.icon"
+              [selected]="section.selected"
+              (click)="navigate(section.id)"
+            >
+              {{ section.title }}
+            </button>
           }
-          <button
-            appTab
-            icon="arrow-right-arrow-left"
-            [selected]="tool().group === 'CONVERT'"
-            (click)="navigate(tool().group === 'CONVERT' ? active() : 'toYaml')"
-          >
-            Convert
-          </button>
           <button appTab icon="ellipsis" class="more-tools" (click)="palette.open()">
             <span>More tools</span>
           </button>

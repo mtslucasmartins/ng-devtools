@@ -8,8 +8,18 @@ export const routes: Routes = [
     path: 'tools',
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'json/viewer' },
-      // No YAML-specific tools yet; the JSON workspace converts to and from YAML.
-      { path: 'yaml', pathMatch: 'full', redirectTo: 'json/viewer' },
+      { path: 'yaml', pathMatch: 'full', redirectTo: 'yaml/viewer' },
+      {
+        path: 'yaml/:slug',
+        loadComponent: () =>
+          import('../features/yaml/ui/yaml-workspace').then((module) => module.YamlWorkspace),
+      },
+      { path: 'data', pathMatch: 'full', redirectTo: 'data/generator' },
+      {
+        path: 'data/generator',
+        loadComponent: () =>
+          import('../features/data/ui/data-workspace').then((module) => module.DataWorkspace),
+      },
       {
         path: '',
         loadChildren: () =>

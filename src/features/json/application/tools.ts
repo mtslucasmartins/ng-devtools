@@ -156,7 +156,7 @@ export const JSON_TOOLS: Tool[] = [
   },
   {
     id: 'escape',
-    title: 'Escape / Unescape',
+    title: 'Strings',
     icon: 'quote-left',
     group: 'TRANSFORM',
     description: 'Safely wrap text in a JSON string, or unwrap it.',

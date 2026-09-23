@@ -19,8 +19,9 @@ import { Seo } from '../../shared/seo/seo';
       <h2>Your documents stay on your device</h2>
       <p>
         Everything you paste, type or upload into the tools on lurtins.com is processed in your
-        browser. Your documents are never sent to our servers or to anyone else, and they are not
-        saved: closing the tab discards them.
+        browser. Your documents are never sent to our servers or to anyone else. Documents are
+        discarded when the tab closes; Data Tools scripts stay in your browser's local storage so
+        you can reuse them.
       </p>
 
       <h2>Hosting</h2>

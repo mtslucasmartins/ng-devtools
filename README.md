@@ -1,6 +1,6 @@
 # Moss · local developer tools
 
-An Angular + TypeScript JSON workspace, styled with locally bundled Bootstrap and Font Awesome. Tool processing happens entirely in the browser. Documents live in memory, are shared across tools, and are discarded when the tab closes. There are no analytics, remote fonts, ad scripts, or API requests.
+An Angular + TypeScript developer workspace, styled with locally bundled Bootstrap and Font Awesome. Tool processing happens entirely in the browser. Documents live in memory and are discarded when the tab closes; Data Tools scripts persist in browser storage. There are no analytics or remote fonts.
 
 ## Run
 

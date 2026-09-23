@@ -113,7 +113,20 @@ describe('local JSON workspace', () => {
     const fixture = TestBed.createComponent(JsonWorkspace);
     fixture.detectChanges();
     const app = fixture.componentInstance;
-    expect(fixture.nativeElement.querySelectorAll('.sidebar .nav-item')).toHaveLength(0);
+    expect(
+      Array.from(
+        fixture.nativeElement.querySelectorAll('.sidebar .nav-item') as NodeListOf<HTMLElement>,
+      ).map((item) => item.textContent?.trim()),
+    ).toEqual(['Viewer', 'Diff', 'JSONPath', 'Schema', 'Strings', 'Convert']);
+    const toggle = fixture.nativeElement.querySelector('.sidebar-toggle') as HTMLButtonElement;
+    toggle.click();
+    fixture.detectChanges();
+    expect(toggle.getAttribute('aria-expanded')).toBe('false');
+    expect((fixture.nativeElement.querySelector('#json-tools-nav') as HTMLElement).hidden).toBe(
+      true,
+    );
+    toggle.click();
+    fixture.detectChanges();
     expect(
       Array.from(
         fixture.nativeElement.querySelectorAll('.sidebar-category') as NodeListOf<HTMLElement>,

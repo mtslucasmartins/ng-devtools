@@ -8,6 +8,9 @@ const OUTPUT = 'dist/ng-devtools/browser/sitemap.xml';
 
 const urls = [
   ...JSON_TOOLS.map((tool) => `${SITE_URL}${JSON_BASE_PATH}/${tool.path}`),
+  `${SITE_URL}/tools/yaml/viewer`,
+  `${SITE_URL}/tools/yaml/convert`,
+  `${SITE_URL}/tools/data/generator`,
   `${SITE_URL}/privacy`,
 ];
 const xml = `<?xml version="1.0" encoding="UTF-8"?>
