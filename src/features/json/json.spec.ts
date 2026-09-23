@@ -72,10 +72,16 @@ describe('local JSON workspace', () => {
       run('schemaValidate', '{}', '{"$ref":"https://example.com/schema"}'),
     ).rejects.toThrow();
   });
-  it('escapes text reversibly and creates valid XML with arbitrary object keys', async () => {
-    const input = 'a "quote"\n<element>&';
-    expect((await run('unescape', (await run('escape', input)).output)).output).toBe(input);
-    await expect(run('unescape', '{}')).rejects.toThrow();
+  it('stringifies JSON and parses stringified JSON back, quoted or not', async () => {
+    const input = '{"a":"say \\"hi\\"","list":[1,null]}';
+    const stringified = (await run('stringify', input)).output;
+    expect(JSON.parse(JSON.parse(stringified))).toEqual(JSON.parse(input));
+    for (const pasted of [stringified, stringified.slice(1, -1), JSON.stringify(stringified)])
+      expect(JSON.parse((await run('format', pasted)).output)).toEqual(JSON.parse(input));
+    expect((await run('format', '"plain text"')).output).toBe('"plain text"');
+    await expect(run('format', '{\\"a\\":')).rejects.toThrow();
+  });
+  it('creates valid XML with arbitrary object keys', async () => {
     const document = new DOMParser().parseFromString(
       (await run('toXml', '{"a b":"<&\\\""}')).output,
       'application/xml',
@@ -115,23 +121,25 @@ describe('local JSON workspace', () => {
     const app = fixture.componentInstance;
     expect(
       Array.from(
-        fixture.nativeElement.querySelectorAll('.sidebar .nav-item') as NodeListOf<HTMLElement>,
+        fixture.nativeElement.querySelectorAll(
+          '#json-tools-nav .nav-item',
+        ) as NodeListOf<HTMLElement>,
       ).map((item) => item.textContent?.trim()),
-    ).toEqual(['Viewer', 'Diff', 'JSONPath', 'Schema', 'Strings', 'Convert']);
+    ).toEqual(['Viewer', 'Diff', 'JSONPath', 'Schema', 'Convert']);
+    // Sections start collapsed; the toggle expands and collapses them.
     const toggle = fixture.nativeElement.querySelector('.sidebar-toggle') as HTMLButtonElement;
-    toggle.click();
-    fixture.detectChanges();
+    const nav = fixture.nativeElement.querySelector('#json-tools-nav') as HTMLElement;
     expect(toggle.getAttribute('aria-expanded')).toBe('false');
-    expect((fixture.nativeElement.querySelector('#json-tools-nav') as HTMLElement).hidden).toBe(
-      true,
-    );
+    expect(nav.hidden).toBe(true);
     toggle.click();
     fixture.detectChanges();
+    expect(toggle.getAttribute('aria-expanded')).toBe('true');
+    expect(nav.hidden).toBe(false);
     expect(
       Array.from(
         fixture.nativeElement.querySelectorAll('.sidebar-category') as NodeListOf<HTMLElement>,
       ).map((link) => link.textContent?.replace(/\d+/, '').trim()),
-    ).toEqual(['JSON Tools', 'YAML Tools']);
+    ).toEqual(['JSON Tools', 'YAML Tools', 'Data Tools', 'Regex Tools']);
     const convertTab = Array.from(
       fixture.nativeElement.querySelectorAll('.tool-tabs button') as NodeListOf<HTMLButtonElement>,
     ).find((button) => button.textContent?.trim() === 'Convert')!;
@@ -186,8 +194,12 @@ describe('local JSON workspace', () => {
     expect(app.workspace.input()).toBe(formatted);
     fixture.detectChanges();
     const actions = fixture.nativeElement.querySelector('.editor-actions');
-    expect(actions.querySelector('button:first-child').textContent).toContain('Minify');
-    expect(actions.querySelector('button:last-child').textContent).toContain('Format');
+    const labels = Array.from(actions.querySelectorAll('button') as NodeListOf<HTMLElement>).map(
+      (button) => button.textContent ?? '',
+    );
+    ['Stringify', 'Minify', 'Format'].forEach((label, index) =>
+      expect(labels[index]).toContain(label),
+    );
     expect(actions.textContent).not.toContain('Format JSON');
     app.editInput('{');
     fixture.detectChanges();
@@ -359,7 +371,7 @@ describe('local JSON workspace', () => {
       /^https:\/\/lurtins\.com\/tools\/json\/minify$/,
     );
     await harness.navigateByUrl('/tools/yaml');
-    expect(TestBed.inject(Router).url).toBe('/tools/json/viewer');
+    expect(TestBed.inject(Router).url).toBe('/tools/yaml/viewer');
     await harness.navigateByUrl('/tools/json/unknown');
     expect(TestBed.inject(Router).url).toBe('/tools/json/viewer');
   });

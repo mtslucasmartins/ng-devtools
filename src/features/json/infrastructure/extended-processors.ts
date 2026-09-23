@@ -1,5 +1,5 @@
 import type { ProcessRequest, ProcessResult } from '../ports/json-processor';
-import { diffJson, inferSchema, type JsonValue } from '../domain/json';
+import { diffJson, inferSchema, parseJson, type JsonValue } from '../domain/json';
 const xmlEscape = (text: string) =>
   text
     .replaceAll('&', '&amp;')
@@ -26,14 +26,14 @@ export async function processExtended(request: ProcessRequest): Promise<ProcessR
   switch (operation) {
     case 'toYaml': {
       const { stringify } = await import('yaml');
-      output = stringify(JSON.parse(input));
+      output = stringify(parseJson(input));
       language = 'yaml';
       break;
     }
     case 'fromYaml': {
       const { parseDocument } = await import('yaml');
-      const doc = parseDocument(input, { uniqueKeys: true });
-      if (doc.errors.length) throw new Error(doc.errors.map((error) => error.message).join('\n'));
+      const doc = parseDocument(input, { uniqueKeys: true, prettyErrors: true });
+      if (doc.errors.length) throw new Error(doc.errors.map((error) => error.message).join('\n\n'));
       output = pretty(doc.toJS({ maxAliasCount: 100 }));
       if (output === undefined)
         throw new Error('This YAML document cannot be represented as JSON.');
@@ -41,7 +41,7 @@ export async function processExtended(request: ProcessRequest): Promise<ProcessR
     }
     case 'toCsv': {
       const { default: Papa } = await import('papaparse');
-      const data: unknown = JSON.parse(input);
+      const data: unknown = parseJson(input);
       if (
         !Array.isArray(data) ||
         !data.length ||
@@ -80,12 +80,12 @@ export async function processExtended(request: ProcessRequest): Promise<ProcessR
       const { JSONPath } = await import('jsonpath-plus');
       if (!query.trim().startsWith('$'))
         throw new Error('Start your JSONPath with $, for example $.favorites[*].');
-      output = pretty(JSONPath({ path: query, json: JSON.parse(input), eval: false }));
+      output = pretty(JSONPath({ path: query, json: parseJson(input), eval: false }));
       message = 'Query complete. Script expressions are disabled for safety.';
       break;
     }
     case 'diff': {
-      const changes = diffJson(JSON.parse(input), JSON.parse(secondary));
+      const changes = diffJson(parseJson(input), JSON.parse(secondary));
       output = pretty(changes);
       message = changes.length
         ? `${changes.length} difference${changes.length === 1 ? '' : 's'} found.`
@@ -95,7 +95,7 @@ export async function processExtended(request: ProcessRequest): Promise<ProcessR
     case 'schemaGenerate':
       output = pretty({
         $schema: 'http://json-schema.org/draft-07/schema#',
-        ...inferSchema(JSON.parse(input)),
+        ...inferSchema(parseJson(input)),
       });
       message = 'Schema inferred from this sample. Review required fields before use.';
       break;
@@ -103,34 +103,23 @@ export async function processExtended(request: ProcessRequest): Promise<ProcessR
       const { default: Ajv } = await import('ajv');
       const ajv = new Ajv({ allErrors: true, strict: false, validateFormats: false });
       const validate = ajv.compile(JSON.parse(secondary));
-      const valid = validate(JSON.parse(input));
+      const valid = validate(parseJson(input));
       output = pretty({ valid, errors: validate.errors ?? [] });
       message = valid
         ? 'JSON matches the schema.'
         : `Schema validation failed: ${validate.errors?.length} issue(s).`;
       break;
     }
-    case 'escape':
-      output = JSON.stringify(input);
-      break;
-    case 'unescape': {
-      const value: unknown = JSON.parse(input);
-      if (typeof value !== 'string')
-        throw new Error('Unescape expects a JSON string enclosed in double quotes.');
-      output = value;
-      language = 'text';
-      break;
-    }
     case 'toXml': {
       if (
         /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(
-          JSON.stringify(JSON.parse(input)).replace(/\\u([0-9a-f]{4})/gi, (_, hex: string) =>
+          JSON.stringify(parseJson(input)).replace(/\\u([0-9a-f]{4})/gi, (_, hex: string) =>
             String.fromCharCode(parseInt(hex, 16)),
           ),
         )
       )
         throw new Error('Input contains control characters that XML 1.0 cannot represent.');
-      output = `<?xml version="1.0" encoding="UTF-8"?>\n<root>${xml(JSON.parse(input))}</root>`;
+      output = `<?xml version="1.0" encoding="UTF-8"?>\n<root>${xml(parseJson(input))}</root>`;
       language = 'xml';
       break;
     }

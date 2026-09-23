@@ -9,6 +9,8 @@ const knownTool: CanMatchFn = (_route, segments: UrlSegment[]) =>
 export const JSON_ROUTES: Routes = [
   { path: 'json', pathMatch: 'full', redirectTo: 'json/viewer' },
   { path: 'json/convert', redirectTo: 'json/to-yaml' },
+  // The string escape tool was folded into the viewer's Stringify action.
+  { path: 'json/escape', redirectTo: 'json/viewer' },
   // One route config for every tool so tab changes reuse the workspace and keep its state.
   { path: 'json/:slug', canMatch: [knownTool], component: JsonWorkspace },
 ];

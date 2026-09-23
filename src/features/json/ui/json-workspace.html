@@ -133,6 +133,16 @@
                   <button
                     appButton
                     variant="minify"
+                    icon="quote-left"
+                    [disabled]="busy()"
+                    (click)="run('stringify')"
+                    title="Wrap the document in a JSON string"
+                  >
+                    Stringify
+                  </button>
+                  <button
+                    appButton
+                    variant="minify"
                     icon="compress"
                     [shortcut]="shortcutModifier + ' ⇧ M'"
                     [disabled]="busy()"
@@ -476,11 +486,6 @@
             </button>
           }
         </div>
-        @if (active() === 'escape') {
-          <button class="btn btn-outline-secondary mb-3" (click)="run('unescape')">
-            Unescape string
-          </button>
-        }
         @if (guide(); as guide) {
           <section appToolGuide [guide]="guide"></section>
         }

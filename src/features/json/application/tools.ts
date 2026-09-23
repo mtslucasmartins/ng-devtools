@@ -155,20 +155,6 @@ export const JSON_TOOLS: Tool[] = [
     },
   },
   {
-    id: 'escape',
-    title: 'Strings',
-    icon: 'quote-left',
-    group: 'TRANSFORM',
-    description: 'Safely wrap text in a JSON string, or unwrap it.',
-    action: 'Escape string',
-    path: 'escape',
-    seo: {
-      title: 'JSON Escape & Unescape: String Tool',
-      description:
-        'Escape text into a valid JSON string, or unescape it back to plain text. Runs locally in your browser.',
-    },
-  },
-  {
     id: 'schemaValidate',
     title: 'Schema',
     icon: 'shield-halved',

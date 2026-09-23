@@ -37,12 +37,12 @@ export function registerJsonCommands(registry: CommandRegistry) {
       execute: (context) => context.run('sort'),
     },
     {
-      id: 'json.unescape',
-      title: 'Unescape JSON string',
-      keywords: ['decode', 'string'],
+      id: 'json.stringify',
+      title: 'Stringify JSON',
+      keywords: ['escape', 'string', 'serialize'],
       category: 'Action',
-      tool: 'escape',
-      execute: (context) => context.run('unescape'),
+      tool: 'format',
+      execute: (context) => context.run('stringify'),
     },
   ]);
 }

@@ -29,6 +29,7 @@ import { Seo } from '../../../shared/seo/seo';
 import { JSON_BASE_PATH, JSON_TOOLS } from '../application/tools';
 import { TOOL_GUIDES } from '../application/tool-guides';
 import { JSON_PROCESSOR, type Operation } from '../ports/json-processor';
+import { parseJson } from '../domain/json';
 import { CommandRegistry, type ToolContext } from '../../commands/application/command-registry';
 import { registerJsonCommands } from '../application/register-commands';
 import { CommandPalette } from '../../commands/ui/command-palette';
@@ -75,7 +76,7 @@ export class JsonWorkspace {
     const byId = (id: Operation) => this.tools.find((tool) => tool.id === id)!;
     const converting = this.tool().group === 'CONVERT';
     return [
-      ...(['format', 'diff', 'jsonpath', 'schemaValidate', 'escape'] as const).map((id) => ({
+      ...(['format', 'diff', 'jsonpath', 'schemaValidate'] as const).map((id) => ({
         ...byId(id),
         selected: this.active() === id,
       })),
@@ -106,13 +107,10 @@ export class JsonWorkspace {
   readonly singleEditor = computed(() => this.active() === 'format');
   readonly undoInput = signal<string | null>(null);
   readonly jsonWarning = computed(() => {
-    if (
-      ['fromYaml', 'fromCsv', 'escape', 'diff'].includes(this.active()) ||
-      !this.workspace.input().trim()
-    )
+    if (['fromYaml', 'fromCsv', 'diff'].includes(this.active()) || !this.workspace.input().trim())
       return '';
     try {
-      JSON.parse(this.workspace.input());
+      parseJson(this.workspace.input());
       return '';
     } catch (error) {
       return error instanceof Error ? error.message : 'Invalid JSON.';
@@ -134,7 +132,7 @@ export class JsonWorkspace {
     try {
       return {
         valid: true,
-        value: JSON.parse(this.singleEditor() ? this.workspace.input() : this.workspace.output()),
+        value: parseJson(this.singleEditor() ? this.workspace.input() : this.workspace.output()),
       };
     } catch {
       return { valid: false, value: null };
@@ -172,7 +170,9 @@ export class JsonWorkspace {
     });
   }
   private isOperation(value: string): value is Operation {
-    return this.tools.some((tool) => tool.id === value) || value === 'sort' || value === 'unescape';
+    return (
+      this.tools.some((tool) => tool.id === value) || value === 'sort' || value === 'stringify'
+    );
   }
   navigate(operation: Operation) {
     this.select(operation);
@@ -203,7 +203,7 @@ export class JsonWorkspace {
         return;
       }
     }
-    if (!['sort', 'unescape', 'validate'].includes(operation)) this.navigate(operation);
+    if (!['sort', 'stringify', 'validate'].includes(operation)) this.navigate(operation);
     void this.run(operation);
   }
   editInput(value: string) {
@@ -270,6 +270,7 @@ export class JsonWorkspace {
         if (
           operation === 'format' ||
           operation === 'minify' ||
+          operation === 'stringify' ||
           (operation === 'sort' && this.singleEditor())
         ) {
           if (result.output !== this.workspace.input()) {

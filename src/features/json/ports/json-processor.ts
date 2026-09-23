@@ -2,6 +2,7 @@ import { InjectionToken } from '@angular/core';
 export type Operation =
   | 'format'
   | 'minify'
+  | 'stringify'
   | 'validate'
   | 'sort'
   | 'diff'
@@ -11,8 +12,6 @@ export type Operation =
   | 'toCsv'
   | 'fromCsv'
   | 'toXml'
-  | 'escape'
-  | 'unescape'
   | 'schemaValidate'
   | 'schemaGenerate';
 export interface ProcessRequest {

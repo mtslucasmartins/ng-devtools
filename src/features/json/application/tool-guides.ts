@@ -13,7 +13,7 @@ const BIG_NUMBERS = {
     'Integers larger than 9,007,199,254,740,991 can lose precision, because browsers store JSON numbers as 64-bit floating point. If your data has long IDs, keep them as strings.',
 };
 
-/** Page copy shown below each tool page. Actions without a page of their own (sort, unescape) have none. */
+/** Page copy shown below each tool page. Actions without a page of their own (sort, stringify) have none. */
 export const TOOL_GUIDES: Partial<Record<Operation, ToolGuideContent>> = {
   format: {
     heading: 'About the JSON Viewer & Formatter',
@@ -23,6 +23,7 @@ export const TOOL_GUIDES: Partial<Record<Operation, ToolGuideContent>> = {
       'Paste JSON into the editor, upload a file, or try the sample.',
       'Pick 2, 4 or 8 spaces and press Format (Ctrl/Cmd + Shift + F).',
       'Use Sort keys to order object keys alphabetically, or switch to Tree to browse the structure.',
+      'Press Stringify to turn the document into a single JSON string, ready to embed in another JSON value.',
       'Copy or download the result. Undo restores the text from before the last change.',
     ],
     faqs: [
@@ -31,6 +32,11 @@ export const TOOL_GUIDES: Partial<Record<Operation, ToolGuideContent>> = {
         question: 'Does formatting change my data?',
         answer:
           'No. Only whitespace changes. Values and key order stay the same unless you choose Sort keys.',
+      },
+      {
+        question: 'Can I paste stringified JSON?',
+        answer:
+          'Yes. A document wrapped in a string, such as "{\\"id\\":1}" copied from a log or an API field, is unwrapped automatically, with or without the surrounding quotes.',
       },
       BIG_NUMBERS,
       {
@@ -243,29 +249,6 @@ export const TOOL_GUIDES: Partial<Record<Operation, ToolGuideContent>> = {
         question: 'Why do I get a control character error?',
         answer:
           'XML 1.0 cannot represent most control characters, even escaped. Remove them from your strings and convert again.',
-      },
-    ],
-  },
-  escape: {
-    heading: 'About JSON Escape & Unescape',
-    intro:
-      'Escaping turns any text into a valid JSON string literal: quotes, backslashes, line breaks and control characters are replaced with escape sequences. Unescaping turns a JSON string back into plain text.',
-    steps: [
-      'Paste the text you want to embed in JSON.',
-      'Press Escape string to get a double-quoted, escaped JSON string.',
-      'To reverse it, paste a quoted JSON string and press Unescape string.',
-    ],
-    faqs: [
-      LOCAL,
-      {
-        question: 'When do I need to escape a string?',
-        answer:
-          'Whenever text is placed inside a JSON value by hand, for example a multi-line message, a Windows path, or JSON stored inside JSON.',
-      },
-      {
-        question: 'Why does unescaping fail?',
-        answer:
-          'The input must be a single JSON string, including the surrounding double quotes, such as "line one\\nline two".',
       },
     ],
   },

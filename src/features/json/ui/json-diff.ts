@@ -1,11 +1,11 @@
 import { Component, computed, model, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { diffJson, type JsonValue } from '../domain/json';
+import { diffJson, parseJson, type JsonValue } from '../domain/json';
 import { diffLines } from '../domain/diff-lines';
 import { tokenize } from './code-output';
 function parse(text: string): { value: JsonValue; error: string } {
   try {
-    return { value: JSON.parse(text), error: '' };
+    return { value: parseJson(text), error: '' };
   } catch (error) {
     return {
       value: null,

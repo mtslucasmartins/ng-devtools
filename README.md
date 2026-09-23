@@ -30,7 +30,7 @@ Register tools through feature metadata and commands through `CommandRegistry.re
 
 ## Tools and shortcuts
 
-Viewer with code/tree views, format/minify actions, automatic validation, structural diff, JSONPath, JSON ↔ YAML, JSON ↔ CSV, JSON → XML, escape/unescape, and JSON Schema validation/generation.
+Viewer with code/tree views, format/stringify/minify actions (stringified JSON is unwrapped automatically), automatic validation, structural diff, JSONPath, JSON ↔ YAML, JSON ↔ CSV, JSON → XML, JSON Schema validation/generation, YAML tools, JSON data generation, and regex match/replace.
 
 - `Ctrl/Cmd + K` or double `Shift`: open commands.
 - `Ctrl/Cmd + Enter`: run the selected tool.

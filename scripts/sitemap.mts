@@ -11,6 +11,8 @@ const urls = [
   `${SITE_URL}/tools/yaml/viewer`,
   `${SITE_URL}/tools/yaml/convert`,
   `${SITE_URL}/tools/data/generator`,
+  `${SITE_URL}/tools/regex/match`,
+  `${SITE_URL}/tools/regex/replace`,
   `${SITE_URL}/privacy`,
 ];
 const xml = `<?xml version="1.0" encoding="UTF-8"?>

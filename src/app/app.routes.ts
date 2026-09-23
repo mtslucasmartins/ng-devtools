@@ -20,6 +20,12 @@ export const routes: Routes = [
         loadComponent: () =>
           import('../features/data/ui/data-workspace').then((module) => module.DataWorkspace),
       },
+      { path: 'regex', pathMatch: 'full', redirectTo: 'regex/match' },
+      {
+        path: 'regex/:slug',
+        loadComponent: () =>
+          import('../features/regex/ui/regex-workspace').then((module) => module.RegexWorkspace),
+      },
       {
         path: '',
         loadChildren: () =>

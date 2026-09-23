@@ -1435,6 +1435,245 @@ h1 {
   white-space: nowrap;
   color: #89977f;
 }
+.regex-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 10px;
+}
+.regex-pattern {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  height: 34px;
+  padding: 0 4px 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+  font:
+    12px 'SFMono-Regular',
+    Consolas,
+    'Liberation Mono',
+    monospace;
+}
+.regex-pattern:focus-within {
+  border-color: #93ad7d;
+  box-shadow: 0 0 0 3px #93ad7d26;
+}
+.regex-pattern.invalid {
+  border-color: #d59b8c;
+}
+.regex-pattern input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0 4px;
+  border: 0;
+  outline: none;
+  background: none;
+  color: #3f5638;
+  font: inherit;
+}
+.regex-pattern input::placeholder {
+  color: #acb4a6;
+}
+.regex-delimiter {
+  color: #a3b096;
+  user-select: none;
+}
+.regex-flags {
+  display: flex;
+  gap: 2px;
+  margin-left: 6px;
+  padding-left: 6px;
+  border-left: 1px solid #e7ebdf;
+}
+.regex-flags button {
+  width: 22px;
+  height: 24px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: #a3ad98;
+  font: inherit;
+}
+.regex-flags button:hover {
+  background: #f0f4eb;
+}
+.regex-flags button.active {
+  background: #dcebcf;
+  color: #315b35;
+  font-weight: 700;
+}
+.regex-literal {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #68785e;
+  font-size: 11px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.regex-literal input {
+  accent-color: #497547;
+}
+/* The textarea sits on top of a mirror that paints match backgrounds behind the same text. */
+.regex-surface {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+}
+.regex-surface textarea {
+  position: relative;
+  z-index: 1;
+}
+.regex-mirror {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  padding: 0 12px 14px 2px;
+  white-space: pre;
+  color: transparent;
+  pointer-events: none;
+}
+.regex-mirror mark {
+  padding: 0;
+  border-radius: 2px;
+  background: #d3e7c3;
+  color: transparent;
+}
+.regex-mirror mark.alt {
+  background: #bcdcaa;
+}
+.regex-results ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.regex-results li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 10px;
+  padding: 0 14px;
+}
+.regex-results li:nth-child(even) {
+  background: #f4f7ef;
+}
+.regex-results-empty {
+  margin: 0;
+  padding: 0 14px;
+  color: #acb4a6;
+}
+.regex-result-index {
+  width: 24px;
+  color: #b9c0b1;
+  text-align: right;
+}
+.regex-result-text {
+  padding: 0 4px;
+  line-height: 17px;
+  border-radius: 3px;
+  background: #dcebcf;
+  color: #315b35;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.regex-result-position {
+  color: #89977f;
+}
+.regex-result-group {
+  display: inline-flex;
+  gap: 4px;
+  color: #68785e;
+}
+.regex-result-group em {
+  font-style: normal;
+  color: #a3ad98;
+}
+.form-control {
+  min-width: 0;
+  height: 32px;
+  font:
+    11px 'SFMono-Regular',
+    Consolas,
+    'Liberation Mono',
+    monospace;
+}
+.flag-select {
+  position: relative;
+  flex-shrink: 0;
+}
+.flag-select summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 112px;
+  height: 32px;
+  padding: 0 9px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: #fff;
+  color: #68785e;
+  font-size: 9px;
+  cursor: pointer;
+  list-style: none;
+}
+.flag-select summary::-webkit-details-marker {
+  display: none;
+}
+.flag-select summary span {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+  color: #527148;
+}
+.flag-options {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 5px);
+  right: 0;
+  width: 175px;
+  padding: 6px;
+  border: 1px solid #dce3d6;
+  border-radius: 7px;
+  background: #fff;
+  box-shadow: 0 10px 30px #17281d20;
+}
+.flag-options label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px;
+  border-radius: 4px;
+  color: #718166;
+  font-size: 9px;
+  cursor: pointer;
+}
+.flag-options label:hover {
+  background: #f0f4eb;
+}
+.flag-options input {
+  accent-color: #497547;
+}
+.flag-options code {
+  width: 14px;
+  color: #527148;
+}
+.regex-highlight-preview {
+  padding: 0 14px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: #6c7669;
+}
+.regex-highlight-preview mark {
+  padding: 2px 1px;
+  border-radius: 2px;
+  background: #dcebcf;
+  color: #315b35;
+  box-shadow: 0 0 0 1px #bdd3ad;
+}
 .form-control {
   font-size: 12px;
   border-color: var(--line);
@@ -1731,6 +1970,12 @@ h1 {
   }
   .toolbar-settings {
     gap: 6px;
+  }
+  .regex-controls {
+    flex-wrap: wrap;
+  }
+  .regex-pattern {
+    flex-basis: 100%;
   }
   .run-button kbd {
     display: none;

@@ -11,6 +11,9 @@ import { YAML_SAMPLE } from '../../../shared/samples/json-samples';
 import { Seo } from '../../../shared/seo/seo';
 import { JSON_PROCESSOR } from '../../json/ports/json-processor';
 import { CodeOutput } from '../../json/ui/code-output';
+import { parseJson } from '../../json/domain/json';
+
+type YamlModule = typeof import('yaml');
 
 const YAML_GUIDES: Record<'viewer' | 'convert', ToolGuideContent> = {
   viewer: {
@@ -18,8 +21,8 @@ const YAML_GUIDES: Record<'viewer' | 'convert', ToolGuideContent> = {
     intro:
       'Format YAML into a consistent, readable document and catch syntax or duplicate-key errors before using it in configuration files.',
     steps: [
-      'Paste YAML into the editor or load the sample.',
-      'Press Format to validate and normalize the document.',
+      'Paste YAML into the editor or load the sample. Syntax errors are reported as you type.',
+      'Press Format to normalize indentation and spacing.',
       'Copy the formatted YAML from the editor.',
     ],
     faqs: [
@@ -192,7 +195,7 @@ const YAML_GUIDES: Record<'viewer' | 'convert', ToolGuideContent> = {
                       [ngModel]="source()"
                       (ngModelChange)="source.set($event); reset()"
                       (scroll)="syncScroll($event, gutter)"
-                      placeholder="Paste YAML here..."
+                      [placeholder]="'Paste ' + inputLanguage() + ' here...'"
                     ></textarea>
                   </div>
                   <footer class="pane-footer">
@@ -208,7 +211,12 @@ const YAML_GUIDES: Record<'viewer' | 'convert', ToolGuideContent> = {
                           direction() === 'fromYaml' ? 'JSON' : 'YAML'
                         }}</span>
                       </div>
-                      <button class="icon-button" aria-label="Copy output" (click)="copy()">
+                      <button
+                        class="icon-button"
+                        aria-label="Copy output"
+                        [disabled]="!output()"
+                        (click)="copy()"
+                      >
                         <i class="fa-solid fa-copy" aria-hidden="true"></i>
                       </button>
                     </header>
@@ -231,16 +239,29 @@ const YAML_GUIDES: Record<'viewer' | 'convert', ToolGuideContent> = {
                 <span
                   ><i
                     class="fa-solid"
-                    [class.fa-circle-check]="!error()"
-                    [class.fa-circle-exclamation]="!!error()"
+                    [class.fa-circle-check]="!problem()"
+                    [class.fa-circle-exclamation]="!!problem()"
                     aria-hidden="true"
                   ></i
-                  >{{ error() || message() }}</span
+                  >{{
+                    warning()
+                      ? 'Invalid ' + inputLanguage() + ' — check the warning below.'
+                      : message()
+                  }}</span
                 ><span class="local-processing"
                   ><i class="fa-solid fa-lock" aria-hidden="true"></i> Local processing</span
                 >
               </div>
             </section>
+            @if (problem()) {
+              <div class="error-message" role="alert">
+                <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                <div>
+                  <strong>Something needs a second look</strong>
+                  <pre>{{ problem() }}</pre>
+                </div>
+              </div>
+            }
             <section appToolGuide class="standalone-guide" [guide]="guide()"></section>
             <footer class="workspace-footer">
               <span
@@ -272,11 +293,32 @@ export class YamlWorkspace {
     this.page() === 'viewer' || this.direction() === 'fromYaml' ? 'YAML' : 'JSON',
   );
   readonly inputLines = computed(() => this.source().split('\n'));
+  /** Loaded on first use; validation starts once it arrives. */
+  private readonly yaml = signal<YamlModule | null>(null);
+  /** Live syntax check of the input, like the JSON viewer's. */
+  readonly warning = computed(() => {
+    const source = this.source();
+    if (!source.trim()) return '';
+    if (this.inputLanguage() === 'JSON') {
+      try {
+        parseJson(source);
+        return '';
+      } catch (error) {
+        return error instanceof Error ? error.message : 'Invalid JSON.';
+      }
+    }
+    const yaml = this.yaml();
+    if (!yaml) return '';
+    const document = yaml.parseDocument(source, { uniqueKeys: true, prettyErrors: true });
+    return document.errors.map((item) => item.message).join('\n\n');
+  });
+  readonly problem = computed(() => this.error() || this.warning());
   private readonly router = inject(Router);
   private readonly processor = inject(JSON_PROCESSOR);
   private readonly seo = inject(Seo);
 
   constructor() {
+    void import('yaml').then((module) => this.yaml.set(module));
     effect(() => {
       const page = this.page();
       this.seo.set({
@@ -312,7 +354,7 @@ export class YamlWorkspace {
     try {
       if (this.page() === 'viewer') {
         const { parseDocument } = await import('yaml');
-        const document = parseDocument(this.source(), { uniqueKeys: true });
+        const document = parseDocument(this.source(), { uniqueKeys: true, prettyErrors: true });
         if (document.errors.length)
           throw new Error(document.errors.map((item) => item.message).join('\n'));
         this.source.set(document.toString({ indent: 2 }));

@@ -67,3 +67,38 @@ export function diffJson(before: JsonValue, after: JsonValue, path = ''): Differ
   }
   return [{ path: path || '/', change: 'changed', before, after }];
 }
+/**
+ * Parses JSON, unwrapping documents that were stringified one or more times, such as
+ * "{\"a\":1}" copied from a log, with or without the surrounding quotes.
+ */
+export function parseJsonText(text: string): { value: JsonValue; unwrapped: boolean } {
+  let value: JsonValue;
+  let syntaxError: unknown = null;
+  try {
+    value = JSON.parse(text);
+  } catch (error) {
+    // An escaped document pasted without its quotes, e.g. {\"a\":1}.
+    if (!/^\s*[[{]\s*\\"/.test(text)) throw error;
+    syntaxError = error;
+    try {
+      value = JSON.parse(`"${text.trim()}"`);
+    } catch {
+      throw error;
+    }
+  }
+  // Unwrap nested strings, but only keep the result when it ends in an object or array,
+  // so a plain string such as "\"quoted\"" is left as it is.
+  let inner: JsonValue = value;
+  for (let depth = 0; typeof inner === 'string' && depth < 8; depth++) {
+    try {
+      inner = JSON.parse(inner) as JsonValue;
+    } catch {
+      break;
+    }
+  }
+  const unwrapped = typeof value === 'string' && inner !== null && typeof inner === 'object';
+  if (unwrapped) value = inner;
+  else if (syntaxError) throw syntaxError;
+  return { value, unwrapped };
+}
+export const parseJson = (text: string): JsonValue => parseJsonText(text).value;

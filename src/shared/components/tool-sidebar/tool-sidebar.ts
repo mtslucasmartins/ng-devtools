@@ -1,7 +1,7 @@
 import { Component, input, output, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-type ToolArea = 'json' | 'yaml' | 'data';
+type ToolArea = 'json' | 'yaml' | 'data' | 'regex';
 
 @Component({
   selector: 'app-tool-sidebar',
@@ -19,7 +19,7 @@ type ToolArea = 'json' | 'yaml' | 'data';
     <div class="sidebar-section">
       <a class="sidebar-category" routerLink="/tools/json/viewer" (click)="close.emit()"
         ><span><i class="fa-solid fa-code" aria-hidden="true"></i> JSON Tools</span
-        ><span class="count">6</span></a
+        ><span class="count">5</span></a
       ><button
         class="icon-button sidebar-toggle"
         [attr.aria-label]="jsonOpen() ? 'Collapse JSON Tools' : 'Expand JSON Tools'"
@@ -109,6 +109,38 @@ type ToolArea = 'json' | 'yaml' | 'data';
       </a>
     </nav>
 
+    <div class="sidebar-section">
+      <a class="sidebar-category" routerLink="/tools/regex/match" (click)="close.emit()"
+        ><span><i class="fa-solid fa-asterisk" aria-hidden="true"></i> Regex Tools</span
+        ><span class="count">2</span></a
+      ><button
+        class="icon-button sidebar-toggle"
+        [attr.aria-label]="regexOpen() ? 'Collapse Regex Tools' : 'Expand Regex Tools'"
+        [attr.aria-expanded]="regexOpen()"
+        aria-controls="regex-tools-nav"
+        (click)="regexOpen.set(!regexOpen())"
+      >
+        <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+      </button>
+    </div>
+    <nav id="regex-tools-nav" aria-label="Regex Tools" [hidden]="!regexOpen()">
+      @for (item of regexTools; track item.path) {
+        <a
+          class="nav-item"
+          [class.active]="active() === 'regex' && current() === item.path"
+          [attr.aria-current]="active() === 'regex' && current() === item.path ? 'page' : null"
+          [routerLink]="'/tools/regex/' + item.path"
+          (click)="close.emit()"
+        >
+          <i [class]="'fa-solid fa-' + item.icon" aria-hidden="true"></i
+          ><span>{{ item.title }}</span>
+          @if (active() === 'regex' && current() === item.path) {
+            <span class="active-dot"></span>
+          }
+        </a>
+      }
+    </nav>
+
     <div class="sidebar-bottom">
       <div class="local-note">
         <span class="local-icon"><i class="fa-solid fa-leaf" aria-hidden="true"></i></span>
@@ -130,16 +162,20 @@ export class ToolSidebar {
   readonly jsonOpen = signal(false);
   readonly yamlOpen = signal(false);
   readonly dataOpen = signal(false);
+  readonly regexOpen = signal(false);
   readonly jsonTools = [
     { title: 'Viewer', path: 'viewer', icon: 'code' },
     { title: 'Diff', path: 'diff', icon: 'code-compare' },
     { title: 'JSONPath', path: 'jsonpath', icon: 'magnifying-glass' },
     { title: 'Schema', path: 'schema', icon: 'shield-halved' },
-    { title: 'Strings', path: 'escape', icon: 'quote-left' },
     { title: 'Convert', path: 'to-yaml', icon: 'arrow-right-arrow-left' },
   ];
   readonly yamlTools = [
     { title: 'Viewer', path: 'viewer', icon: 'file-lines' },
     { title: 'Convert', path: 'convert', icon: 'arrow-right-arrow-left' },
+  ];
+  readonly regexTools = [
+    { title: 'Match', path: 'match', icon: 'magnifying-glass' },
+    { title: 'Replace', path: 'replace', icon: 'pen-to-square' },
   ];
 }
